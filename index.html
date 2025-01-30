@@ -1,258 +1,582 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>AVA</title>
-<style>
-  body {
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f0f0f0;
-  }
-  
-  #chat-container {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    width: 1500px;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  #chat-history {
-    height: 720px;
-    overflow-y: scroll;
-  }
-  
-  .user-message {
-    text-align: right;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    margin-bottom: 5px;
-  }
-  
-  .bot-message {
-    text-align: left;
-    padding: 15px;
-    background-color: #7f38ea;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    color: white;
-  }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/monokai-sublime.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/cs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <title>AVA- Yapay Zeka Sağlık Asistanı</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <style>
+         .code-container {
+           position: relative;
+            background-color: #8c78df;
+            border-radius: 5px;
+            border:1px solid #666;
+              margin-bottom: 10px;
+        }
+       .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            color: #fff;
+             border-bottom: 1px solid #666;
+              border-radius: 5px 5px 0 0;
+         }
 
-  .old-bot-message {
-    text-align: left;
-    padding: 15px;
-    background-color: #999;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    color: white;
-  }
+         .code-language {
+            font-style: italic;
+        }
 
-  .bot-message-line {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
+        .code-copy-button {
+             background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
 
-  @keyframes slideIn {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
+        .code-copy-button:hover {
+            background-color: #367c39;
+        }
+        pre {
+             padding: 10px;
+             overflow-x: auto;
+            
+           
+        }
+         pre code {
+            display: block;
+            white-space: pre;
+            overflow-x: auto;
+           
+             font-family: 'Consolas', 'Courier New', monospace;
+             font-size: 14px;
+        }
 
-  @keyframes imageGrowShrink {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
-
-  .link-preview {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .link-preview img {
-    max-width: 100px;
-    margin-right: 10px;
-    border-radius: 10px; /* Köşeleri yuvarla */
-  }
-  
-  .link-preview div {
-    max-width: 600px;
-  }
-
-  form {
-    display: flex;
-  }
-  
-  input {
-    flex-grow: 1;
-    margin-right: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button {
-    background-color: #9115a2;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  #loader {
-    display: none; /* Hide by default */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-</style>
+        .line-numbers {
+           flex-shrink: 0;
+            width: 30px;
+            padding-right: 10px;
+            text-align: right;
+            color: #777;
+            white-space: pre;
+            text-shadow: 1px 1px 1px #000;
+        }
+    </style>
 </head>
 <body>
-  <div id="chat-container">
-    <h1>AVA - Sanal Sağlık Uzmanı</h1>
-    <div id="chat-history"></div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Enter your message">
-      <button type="submit">Send</button>
-    </form>
-  </div>
-  <div id="loader">
+<div id="popup">
+    <div id="popup-content">
+        <button id="popup-close">Kapat</button>
+        <img src="popup1.png" alt="" srcset="" id="popup-image">
+        <div id="popup-button-container">
+            <button id="prev-button">Geri</button> <button id="next-button">İleri</button>
+        </div>
+    </div>
+</div>
+<div id="chat-container">
+    <div id="sidebar">
+        <div id="sidebar-top"></div>
+        <button id="new-conversation-btn">Yeni Konuşma</button>
+        <div id="conversation-list"></div>
+    </div>
+    <div id="main-chat">
+        <div id="chat-history-container">
+            <div id="chat-history"></div>
+        </div>
+        <form id="chat-form">
+            <textarea id="user-input" placeholder="Mesajınızı buraya yazın..."></textarea>
+            <button type="submit">Gönder</button>
+        </form>
+    </div>
+</div>
+<div id="loader">
     <img src="loader.gif" width="150px" alt="Loading...">
-  </div>
-  <script>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js";
+    import { getDatabase, ref, push, set, onValue, off, update, get, child } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAn7n4qNc8EzXp8IaKgzfH2eH3zFbFo9Oc",
+        authDomain: "mai-t-14b36.firebaseapp.com",
+        databaseURL: "https://mai-t-14b36-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "mai-t-14b36",
+        storageBucket: "mai-t-14b36.firebasestorage.app",
+        messagingSenderId: "517358581400",
+        appId: "1:517358581400:web:0f5b937c8b7e73297002ed",
+        measurementId: "G-708SLN0DF0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
     const chatHistory = document.getElementById('chat-history');
     const userInput = document.getElementById('user-input');
+    const userInputHint = document.getElementById('user-input-hint');
     const form = document.getElementById('chat-form');
+    const newConversationBtn = document.getElementById('new-conversation-btn');
+    const conversationList = document.getElementById('conversation-list');
+    const loader = document.getElementById('loader');
+    const popup = document.getElementById('popup');
+    const popupClose = document.getElementById('popup-close');
+    const popupImage = document.getElementById('popup-image');
+    const prevButton = document.getElementById('prev-button');
+    const nextButton = document.getElementById('next-button');
+    const logoutButton = document.getElementById('logout-button');
+    const chatHistoryContainer = document.getElementById('chat-history-container');
+    const backgroundVideo = document.getElementById('background-video');
 
-    async function sendMessage() {
-      const userMessage = userInput.value;
-      userInput.value = ''; // Clear input field
-      console.log(userMessage);
-      try {
-        const response = await fetch('/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userInput: userMessage }),
-        });
+    const images = ['popup1.png', 'popup2.png', 'popup3.png'];
+    let currentImageIndex = 0;
 
-        const data = await response.json();
-        console.log(data);
-        let botMessage = data.response;
-        console.log(botMessage);
+    let currentConversationId = null;
+    let messageListener = null;
+    let currentUserId = null;
 
-        // Function to fetch link preview data
-        async function fetchLinkPreview(url) {
-          const apiURL = `https://api.linkpreview.net/?key=a356f4cef8041a3ff8c770542f8e5248&q=${encodeURIComponent(url)}`;
-          const response = await fetch(apiURL);
-          const data = await response.json();
-          return data;
+    const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    const boldPattern = /\*\*(.*?)\*\*/g;
+    const italicPattern = /(\*|_)(.*?)\1/g;
+    const strikethroughPattern = /~(.*?)~/g;
+    const headingPattern = /^(#{1,6})\s+(.*)$/gm;
+    const listPattern = /^(\*|-|\+)\s+(.*)$/gm;
+    const blockquotePattern = /^>\s+(.*)$/gm;
+    const productLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s"']+)\)/g;
+    const codeBlockPattern = /```(csharp|cpp|python|cs)?\n([\s\S]*?)\n```/g;
+
+    userInput.addEventListener('input', () => {
+        const lineHeight = parseInt(getComputedStyle(userInput).lineHeight);
+        const currentLine = Math.floor(userInput.scrollHeight / lineHeight);
+        userInput.style.paddingTop = `${currentLine * lineHeight - lineHeight}px`;
+
+        if (!localStorage.getItem('popupShown')) {
+            popup.style.display = 'block';
+            localStorage.setItem('popupShown', 'true');
         }
 
-        // Process the bot message to find URLs
-        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        const urls = botMessage.match(urlPattern);
-
-        // Remove URLs and asterisks from the bot message
-        if (urls) {
-          urls.forEach((url) => {
-            botMessage = botMessage.replace(url, ''); // Remove the URL from the bot message
-          });
-        }
-        botMessage = botMessage.replace(/\*/g, ''); // Remove asterisks from the bot message
-
-        // Add user message to chat history
-        chatHistory.innerHTML += `<div class="user-message">${userMessage}</div>`;
-
-        // Get all existing bot messages and change their class to old-bot-message
-        const existingBotMessages = document.querySelectorAll('.bot-message');
-        existingBotMessages.forEach(msg => {
-          msg.className = 'old-bot-message';
-          // Remove animation from old bot messages
-          const botMessageLinesDivs = msg.querySelectorAll('.bot-message-line');
-          botMessageLinesDivs.forEach(lineDiv => {
-            lineDiv.style.animation = 'none';
-          });
+        popupClose.addEventListener('click', () => {
+            popup.style.display = 'none';
         });
 
-        const botMessageDiv = document.createElement('div');
-        botMessageDiv.className = 'bot-message';
-        
-        // Split the bot message into lines and animate each line
-        const botMessageLines = botMessage.trim().split('\n');
-        botMessageDiv.innerHTML = botMessageLines.map(line => `<div class="bot-message-line">${line}</div>`).join('');
-        
-        chatHistory.appendChild(botMessageDiv);
-
-        // Animate each line with a delay
-        const botMessageLinesDivs = botMessageDiv.querySelectorAll('.bot-message-line');
-        botMessageLinesDivs.forEach((lineDiv, index) => {
-          lineDiv.style.animation = `slideIn 0.5s ${index * 0.5}s forwards`;
+        prevButton.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            popupImage.src = images[currentImageIndex];
         });
 
-        // Fetch and display link previews with animation
-        if (urls) {
-          for (const url of urls) {
-            const previewData = await fetchLinkPreview(url);
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'link-preview';
-            previewDiv.innerHTML = `
-              <img src="${previewData.image}" alt="Preview Image">
-              <div>
-                <h4>${previewData.title}</h4>
-                <p>${previewData.description}</p>
-                <a href="${previewData.url}" target="_blank">${previewData.url}</a>
-              </div>
-            `;
-            chatHistory.appendChild(previewDiv);
+        nextButton.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            popupImage.src = images[currentImageIndex];
+        });
 
-            // Animate the link preview
-            previewDiv.style.animation = `slideIn 0.5s ${botMessageLines.length * 0.5}s forwards`;
+        if (currentLine > 10) {
+            userInput.value = userInput.value.substring(0, userInput.value.lastIndexOf('\n'));
+        }
+    });
 
-            // After the last line animation is done, animate the images in the latest link previews
-            setTimeout(() => {
-              previewDiv.querySelector('img').style.animation = `imageGrowShrink 1s forwards`;
-            }, botMessageLines.length * 500); // Delay equal to the total duration of the text animations
+    userInput.addEventListener('focus', () => {
+        userInput.placeholder = '';
+    });
 
-            // Scroll to the bottom again after adding the preview
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-          }
+    userInput.addEventListener('blur', () => {
+        userInput.placeholder = 'Mesajınızı buraya yazın...';
+        userInput.style.paddingTop = '10px';
+    });
+
+    function savePhoneNumberToFirebase(phoneNumber) {
+        if (!currentConversationId) {
+            console.error("Geçerli bir konuşma ID'si yok!");
+            return;
         }
 
-        // Scroll to the bottom of the chat history
-        chatHistory.scrollTop = chatHistory.scrollHeight;
-        
-      } catch (error) {
-        console.error('Error:', error);
-        // Handle errors gracefully, e.g., display an error message to the user
-      }
+        const phoneNumberRef = ref(database, `conversations/${currentConversationId}/phoneNumber`);
+        set(phoneNumberRef, phoneNumber)
+            .then(() => {
+                console.log("Telefon numarası Firebase'e kaydedildi:", phoneNumber);
+            })
+            .catch((error) => {
+                console.error("Telefon numarası kaydedilirken hata oluştu:", error);
+            });
     }
 
-    form.addEventListener('submit', (event) => {
-      event.preventDefault(); // Prevent form submission
-      const loader = document.getElementById('loader');
-      loader.style.display = 'block'; // Show the loader
-      sendMessage().finally(() => {
-        loader.style.display = 'none'; // Hide the loader after the message is sent
-      });
+    function displayLoader(show) {
+        loader.style.display = show ? 'block' : 'none';
+    }
+
+    let userMessage = document.getElementById('user-input').value;
+
+    async function sendMessage() {
+        console.log("1. sendMessage fonksiyonuna girildi.");
+        if (!currentConversationId) {
+            console.log("1a. currentConversationId bulunamadı, yeni konuşma oluşturuluyor.");
+            createNewConversation();
+            return;
+        }
+        console.log("2. currentConversationId:", currentConversationId);
+        userMessage = document.getElementById('user-input').value;
+        userInput.value = '';
+        console.log("3. Kullanıcı mesajı:", userMessage);
+
+        try {
+            displayLoader(true);
+            console.log("5. Yükleniyor animasyonu gösterildi.");
+
+            const phoneNumberMatch = userMessage.match(/0\d{10}/);
+            if (phoneNumberMatch) {
+                console.log("5a. Telefon numarası bulundu:", phoneNumberMatch[0]);
+                phoneNumber = phoneNumberMatch[0];
+                userMessage = userMessage.replace(phoneNumber, '').trim();
+                savePhoneNumberToFirebase(phoneNumber);
+            } else {
+                console.log("Kullanıcı mesajında telefon numarası bulunamadı.");
+            }
+
+            chatHistory.innerHTML += `<div class="user-message">${userMessage}</div>`;
+
+            console.log("7. Sunucuya istek gönderiliyor...");
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',  // Hangi domainlere izin verileceğini belirtirsiniz
+                },
+                body: JSON.stringify({
+                    userInput: userMessage,
+                    conversationId: currentConversationId,
+                    userId: currentUserId,
+                }),
+            });
+            console.log("8. Sunucudan cevap alındı.");
+
+            let data = await response.json();
+            let botMessage = data.response;
+            console.log("10. Bot mesajı:", botMessage);
+            let history = data.history;
+            console.log("9. Sunucu cevabı (data):", data);
+
+            let displayBotMessage = botMessage;
+            console.log("Format Öncesi:  " + botMessage);
+
+            const formattedBotMessage = validateMessageFormat(botMessage, true).formattedMessage;
+
+            const botMessageElement = document.createElement('div');
+            botMessageElement.classList.add('bot-message');
+            botMessageElement.innerHTML = `${formattedBotMessage} <button class="copy-button" onclick="copyToClipboardFromButton(this)">Kopyala</button>`;
+            chatHistory.appendChild(botMessageElement);
+
+
+            saveMessageToFirebase(userMessage, botMessage);
+        } catch (error) {
+            console.error('Hata:', error);
+        } finally {
+            displayLoader(false);
+        }
+    }
+
+    window.copyToClipboard = function (botMessage) {
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = botMessage;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempTextArea);
+
+        const copyButtons = document.getElementsByClassName('copy-button');
+
+        for (const button of copyButtons) {
+            button.innerText = 'Kopyala';
+        }
+
+        event.target.innerText = "Kopyalandı!";
+        setTimeout(() => {
+            event.target.innerText = "Kopyala";
+        }, 2000);
+    }
+
+    window.copyToClipboardFromButton = function (button) {
+        const botMessageElement = button.parentElement;
+        const preElement = botMessageElement.querySelector('pre');
+        let combinedCode = '';
+
+        if (preElement) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = preElement.innerHTML;
+
+            // Tüm HTML etiketlerini temizle
+            tempDiv.querySelectorAll('.line-numbers').forEach(el => el.remove());
+            combinedCode = tempDiv.innerText;
+
+        } else {
+            combinedCode = botMessageElement.textContent.trim();
+        }
+
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = combinedCode;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempTextArea);
+
+        const copyButtons = document.getElementsByClassName('copy-button');
+
+        for (const btn of copyButtons) {
+            btn.innerText = 'Kopyala';
+        }
+
+        button.innerText = "Kopyalandı!";
+        setTimeout(() => {
+            button.innerText = "Kopyala";
+        }, 2000);
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await sendMessage();
     });
-  </script>
+
+    userInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    newConversationBtn.addEventListener('click', async () => {
+        const name = prompt("Konuşma Adını Girin:");
+        if (name) {
+            await createNewConversation(name);
+        }
+    });
+
+    async function createNewConversation(name = 'Yeni Konuşma') {
+        const newConversationRef = push(ref(database, `users/${currentUserId}/conversations`));
+        currentConversationId = newConversationRef.key;
+
+        const initialMessageRef = push(ref(database, `users/${currentUserId}/conversations/${currentConversationId}/messages`));
+
+        set(initialMessageRef, {
+            userMessage: 'Merhaba',
+            botMessage: "Ben Ava, yapay zeka sağlık asistanınız olarak size vitaminler hakkında bilgi verebilirim. Örneğin, “Baş ağrıları için hangi vitaminler önerilir?” gibi sorularınızı yanıtlayabilirim. 💊",
+            timestamp: Date.now(),
+        });
+
+        update(ref(database, `users/${currentUserId}/conversations/${currentConversationId}`), {
+            name: name
+        });
+
+        loadConversations(currentUserId);
+        loadConversation(currentConversationId, currentUserId);
+        notifyServerNewConversation(currentConversationId);
+    }
+
+    function loadConversations(userId) {
+        console.log("loadConversations() fonksiyonu çağrıldı.");
+        off(ref(database, `users/${userId}/conversations`));
+
+        onValue(ref(database, `users/${userId}/conversations`), (snapshot) => {
+            console.log("Konuşmalar yüklendi:", snapshot.val());
+            const conversations = snapshot.val();
+            conversationList.innerHTML = '';
+
+            if (conversations) {
+                for (const conversationId in conversations) {
+                    if (conversations.hasOwnProperty(conversationId)) {
+                        const conversationElement = document.createElement('div');
+                        conversationElement.classList.add('conversation-item');
+                        if (conversationId === currentConversationId) {
+                            conversationElement.classList.add('selected');
+                        }
+                        conversationElement.innerText = conversations[conversationId].name || `Konuşma ${conversationId}`;
+                        conversationElement.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            loadConversation(conversationId, userId);
+                        });
+
+                        const editButton = document.createElement('button');
+                        editButton.classList.add('edit-conversation-button');
+                        editButton.innerText = 'Düzenle';
+
+                        editButton.dataset.conversationId = conversationId;
+
+                        editButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const conversationId = e.target.dataset.conversationId;
+                            const newName = prompt('Yeni konuşma adını girin:', conversationElement.innerText);
+                            if (newName) {
+                                update(ref(database, `users/${userId}/conversations/${conversationId}`), {
+                                    name: newName
+                                });
+                            }
+                        });
+
+                        conversationElement.appendChild(editButton);
+                        conversationList.appendChild(conversationElement);
+                    }
+                }
+            }
+        });
+    }
+
+    function validateMessageFormat(message, isBotMessage = false) {
+        let urls = [];
+        let isValid = true;
+
+        if (message.match(urlPattern)) {
+            console.log("Mesaj URL içeriyor.");
+        }
+        if (message.match(boldPattern)) {
+            console.log("Mesaj kalın metin içeriyor.");
+        } else if (message.match(italicPattern)) {
+            console.log("Mesaj italik metin içeriyor.");
+        } else if (message.match(strikethroughPattern)) {
+            console.log("Mesaj üstü çizili metin içeriyor.");
+        } else if (message.match(headingPattern)) {
+            console.log("Mesaj başlık içeriyor.");
+        } else if (message.match(listPattern)) {
+            console.log("Mesaj liste içeriyor.");
+        } else if (message.match(blockquotePattern)) {
+            console.log("Mesaj alıntı içeriyor.");
+        }
+
+        const formattedMessage = message.replace(codeBlockPattern, (match, language, code) => {
+            const langClass = language ? `language-${language}` : 'language-text';
+            const highlightedCode = hljs.highlight(code, { language: language }).value;
+             
+            const lines = highlightedCode.split('\n');
+            let numberedCode = '';
+            let lineNumber = 1;
+
+            for (const line of lines) {
+                numberedCode += `<div><span class="line-numbers">${lineNumber}</span><span>${line}</span></div>`
+                lineNumber++;
+            }
+
+            return `<div class="code-container"><div class="code-header"><span class="code-language">${language || 'text'}</span><button class="code-copy-button" onclick="copyCodeBlock(this)">Kopyala</button></div><pre><code class="${langClass}">${numberedCode}</code></pre></div>`;
+         });
+
+        if (isValid && isBotMessage) {
+            console.log("Format öncesi mesaj: ", message);
+            message = formattedMessage
+                .replace(boldPattern, '<strong>$1</strong>')
+                .replace(italicPattern, '<em>$2</em>')
+                .replace(strikethroughPattern, '<del>$1</del>')
+                .replace(headingPattern, (match, hashes, text) => `<h${hashes.length}>${text}</h${hashes.length}>`)
+                .replace(listPattern, '<li>$2</li>')
+                .replace(blockquotePattern, '<blockquote>$1</blockquote>')
+                .replace(productLinkPattern, (match, text, url) => {
+                    console.log("Bulunan Link:", url);
+                    return `<a href="${url}" target="_blank">${text}</a>`;
+                });
+
+            message = message.replace(/\n/g, '<br>');
+            console.log("Format sonrası mesaj: ", message);
+        } else if (isValid) {
+            message = formattedMessage
+                .replace(/\n/g, '<br>');
+        }
+
+        return {isValid: isValid, formattedMessage: message, urls: urls};
+    }
+
+  window.copyCodeBlock = function(button) {
+        const preElement = button.parentElement.parentElement;
+        const codeElement = preElement.querySelector('code');
+         let combinedCode = '';
+         
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = codeElement.innerHTML;
+
+        // Tüm HTML etiketlerini temizle
+        tempDiv.querySelectorAll('.line-numbers').forEach(el => el.remove());
+        combinedCode = tempDiv.textContent;
+
+
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = combinedCode;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempTextArea);
+
+        button.innerText = "Kopyalandı!";
+        setTimeout(() => {
+            button.innerText = "Kopyala";
+        }, 2000);
+    };
+
+    function loadConversation(conversationId, userId) {
+        currentConversationId = conversationId;
+
+        if (messageListener) {
+            off(ref(database, `users/${userId}/conversations/${currentConversationId}/messages`), 'value', messageListener);
+        }
+
+        messageListener = onValue(ref(database, `users/${userId}/conversations/${currentConversationId}/messages`), (snapshot) => {
+            const messages = snapshot.val();
+            chatHistory.innerHTML = '';
+            localStorage.setItem(`lastConversationId-${currentUserId}`, conversationId);
+            for (const messageId in messages) {
+                if (messages.hasOwnProperty(messageId)) {
+                    const message = messages[messageId];
+
+                    const formattedUserMessage = validateMessageFormat(message.userMessage).formattedMessage;
+                    const formattedBotMessage = validateMessageFormat(message.botMessage, true).formattedMessage;
+
+                    const userMessageElement = document.createElement('div');
+                    userMessageElement.classList.add('user-message');
+                    userMessageElement.innerHTML = formattedUserMessage;
+                    chatHistory.appendChild(userMessageElement);
+
+                    const botMessageElement = document.createElement('div');
+                    botMessageElement.classList.add('bot-message');
+                    botMessageElement.innerHTML = `${formattedBotMessage} <button class="copy-button">Kopyala</button>`;
+                    chatHistory.appendChild(botMessageElement);
+                }
+            }
+
+            const copyButtons = document.querySelectorAll('.bot-message .copy-button');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    copyToClipboardFromButton(button);
+                });
+            });
+
+
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
+
+        loadConversations(userId);
+    }
+
+    function saveMessageToFirebase(userMessage, botMessage) {
+        if (!currentConversationId) {
+            createNewConversation();
+            return;
+        }
+
+        const messageRef = push(ref(database, `users/${currentUserId}/conversations/${currentConversationId}/messages`));
+
+        set(messageRef, {
+            userMessage: userMessage,
+            botMessage: botMessage,
+            timestamp: Date.now(),
+        });
+    }
+
+    async function initialize() {
+        const urlParams = new URLSearchParams(window.location.search);
+        await loadConversations(currentUserId);
+    }
+
+    initialize();
+</script>
 </body>
 </html>
